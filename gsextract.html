@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Research Paper Extractor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #search-form {
+            margin-bottom: 20px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .paper {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .title {
+            font-weight: bold;
+        }
+        .authors, .date, .publication, .journal, {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <form id="search-form">
+        <input type="text" id="search-query" placeholder="Enter search term">
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('search-query').value;
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(paper => {
+                    let paperDiv = document.createElement('div');
+                    paperDiv.className = 'paper';
+                    paperDiv.innerHTML = `<div class="title">${paper.title}</div>
+                                          <div class="authors">Authors: ${paper.authors}</div>
+                                          <div class="publication">Publication: ${paper.publication}</div>
+                                          <div class="date">Date: ${paper.date}</div>
+                                          <div class="journal">Journal: ${paper.journal}</div>
+                                 `;
+                    resultsDiv.appendChild(paperDiv);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
